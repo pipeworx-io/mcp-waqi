@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-waqi",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "WAQI MCP — World Air Quality Index (free key)",
   "type": "module",
   "main": "src/index.ts",
@@ -26,7 +26,7 @@
     "@cloudflare/workers-types": "^4.20260405.1"
   },
   "pipeworx": {
-    "sourceHash": "v1-91524e7fa8e0e74076f1e7f7778d3139c26ae049505d2c3ad6f63b6969e87d29",
-    "sourceCommit": "b0fb3c31386cf0256dcf1e2f1b3440435a87ec35"
+    "sourceHash": "v1-eae48a9caa74e32043da18a60f27b6545a1743ef58045098aaa52af1d0855018",
+    "sourceCommit": "2cb50b368da3267446f2b6f6a3ddbd3d0eed3d73"
   }
 }
