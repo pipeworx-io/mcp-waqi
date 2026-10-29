@@ -1,12 +1,20 @@
 {
   "name": "@pipeworx/mcp-waqi",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "WAQI MCP — World Air Quality Index (free key)",
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./tools.json": "./tools.json",
+    "./package.json": "./package.json"
+  },
   "bin": {
     "mcp-waqi": "bin/cli.js"
+  },
+  "files": ["bin/", "lib/", "tools.json", "server.json"],
+  "engines": {
+    "node": ">=18"
   },
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "waqi"],
   "license": "MIT",
@@ -14,19 +22,12 @@
     "type": "git",
     "url": "git+https://github.com/pipeworx-io/mcp-waqi.git"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "tsx": "^4.19.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3",
-    "@cloudflare/workers-types": "^4.20260405.1"
-  },
+  "mcpName": "io.github.pipeworx-io/waqi",
   "pipeworx": {
-    "sourceHash": "v1-eae48a9caa74e32043da18a60f27b6545a1743ef58045098aaa52af1d0855018",
-    "sourceCommit": "2cb50b368da3267446f2b6f6a3ddbd3d0eed3d73"
+    "mode": "gateway",
+    "slug": "waqi",
+    "gatewaySlug": "waqi",
+    "sourceHash": "v1-a38cb72970a71193b0c68ef19b2c78cc27a6f670d8e8c745ad986c9c94223fbc",
+    "sourceCommit": "98853f34516646cb7c4c1460f09249b262c0269e"
   }
 }

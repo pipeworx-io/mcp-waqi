@@ -2,7 +2,7 @@
 
 World Air Quality Index MCP — 12k+ real-time AQI stations worldwide.
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1684+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1857+ live data sources. This is an independent, unofficial integration — not affiliated with, endorsed by, or published by the upstream provider.
 
 ## Tools
 
@@ -19,6 +19,39 @@ Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents 
 ## Data source
 
 `https://api.waqi.info/` — `?token=` query param.
+
+## Freshness (fleet #3741)
+
+A monitoring station that stops reporting keeps serving its last value, so an
+upstream feed can answer with a plausible AQI that is months old. Every reading
+from this pack therefore carries `measured_at`, the station identity,
+`data_age_hours`, `freshness` (`fresh` | `stale` | `unknown`) and
+`freshness_bound_hours` (24).
+
+- `get_aqi_by_city` and `get_aqi_by_location` never present a reading older than
+  24h as current. If the matched station is stale they use the nearest station
+  within 100 km that is reporting (`station_selection:
+  "fallback_fresher_station"`, with `skipped_stale_station` naming what was passed
+  over), or they error naming the station, its `measured_at` and its age.
+- `get_aqi_by_station` returns the station that was asked for, labelled with its
+  age, because the caller chose it.
+- City matching: see "Place resolution" below.
+
+## Place resolution (fleet #3751)
+
+The publisher's city resolver can map a name to the wrong place ("Venice" to a
+station in Dayton, Ohio). `get_aqi_by_city` therefore accepts `"city"` or
+`"city, country"` (also `"Roma Italia"`), and verifies that the matched
+station's own name is the requested city (exact, a listed exonym such as
+Venice/Venezia, or one letter off such as Rome/Roma) and, when a qualifier is
+given, that its country or region agrees. A station that fails is never served:
+if stations whose own name is the city report in one place, that one is used
+(`station_selection: "resolved_by_search"`, `rejected_upstream_match` names what
+was refused); if several places share the name they are listed; otherwise the
+call errors naming the station it matched. Every city response carries a
+`place` block with the requested and matched place.
+
+Source: World Air Quality Index Project, station network.
 
 ## Quick Start
 
@@ -64,7 +97,7 @@ directly, instead of just this one's:
 }
 ```
 
-Both URLs reach the same gateway and the same 1684+ data sources. The
+Both URLs reach the same gateway and the same 1857+ data sources. The
 only difference is which pack's tools are listed **directly**; `ask_pipeworx`
 reaches all of them from either one.
 
@@ -78,10 +111,12 @@ curl -X POST https://gateway.pipeworx.io/v1/tools/get_aqi_by_city \
 
 No account needed for the first calls. Inspect any tool: `GET https://gateway.pipeworx.io/v1/tools/get_aqi_by_city`. Find one: `POST https://gateway.pipeworx.io/v1/tools/search_packs` with `{"query":"..."}`.
 
-## Standalone (no gateway account)
+## Run it from npm
 
-This package also runs as a local stdio MCP server — no Pipeworx account, no
-gateway round-trip:
+`@pipeworx/mcp-waqi` is a local stdio bridge to the Pipeworx gateway: your MCP client
+starts it with `npx`, and it forwards every call to the same
+`https://gateway.pipeworx.io/waqi/mcp` endpoint shown above. It needs network access;
+there is no offline mode.
 
 ```json
 {
@@ -94,15 +129,18 @@ gateway round-trip:
 }
 ```
 
-Or run it directly to confirm it starts:
+Without a key it calls anonymously, capped at 50 calls a day. A free account
+raises that to 200 a day: get a key at https://pipeworx.io/signup and add
+`"env": { "PIPEWORX_API_KEY": "<your key>" }` to the server entry.
+The key is sent as a Bearer token, the same way a hosted connection sends it,
+so calls are metered and billed exactly as they are there.
 
-```bash
-npx -y @pipeworx/mcp-waqi
-```
+It lists **only** this pack's tools by default. Set `PIPEWORX_META_TOOLS=1` to
+also list `ask_pipeworx` and the other gateway-wide tools.
 
-It speaks MCP over stdin/stdout and answers `initialize`/`tools/list`/`tools/call`
-for **only** this pack's tools — none of the shared meta-tools the gateway
-connection above adds. Same source, same tools, no ask_pipeworx routing.
+Behind an HTTPS proxy: Node's built-in `fetch` does not read `HTTPS_PROXY` by
+default. Newer Node releases honour it when `NODE_USE_ENV_PROXY=1` is set; check
+your Node version's documentation.
 
 ## Using with ask_pipeworx
 
