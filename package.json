@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-waqi",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "WAQI MCP — World Air Quality Index (free key)",
   "type": "module",
   "main": "lib/index.js",
@@ -27,7 +27,7 @@
     "mode": "gateway",
     "slug": "waqi",
     "gatewaySlug": "waqi",
-    "sourceHash": "v1-a38cb72970a71193b0c68ef19b2c78cc27a6f670d8e8c745ad986c9c94223fbc",
-    "sourceCommit": "98853f34516646cb7c4c1460f09249b262c0269e"
+    "sourceHash": "v1-4bfe37b318e9590c58c89ba548a9b34c46d0cdaaaf69657ec5a2a21c31fdf026",
+    "sourceCommit": "ca52e7ed1e1ccad897c2da1b0fa105edc0bc3b2e"
   }
 }
